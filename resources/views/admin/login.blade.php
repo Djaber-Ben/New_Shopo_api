@@ -22,15 +22,15 @@
 			  	</div>
 			  	<div class="card-body">
 					<p class="login-box-msg">Sign in to start your session</p>
-					{{-- @if ($errors->any())
-						<div class="alert alert-danger">
-							<ul>
-								@foreach ($errors->all() as $error)
-									<li>{{ $error }}</li>
-								@endforeach
-							</ul>
+					@if (request()->has('reset') && request()->get('reset') === 'success')
+						<div class="alert alert-success alert-dismissible fade show" role="alert">
+							<i class="fas fa-check-circle"></i> Password has been successfully reset.
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
 						</div>
-					@endif --}}
+					@endif
+
 					<form action="{{ route('admin.authenticate') }}" method="post">
 						@csrf
 				  		<div class="input-group mb-3">
@@ -72,7 +72,7 @@
 				  		</div>
 					</form>
 		  			<p class="mb-1 mt-3">
-				  		<a href="forgot-password.html">I forgot my password</a>
+				  		<a class="text-info" href="{{ route('admin.forgotPasswordForm') }}">I forgot my password</a>
 					</p>					
 			  	</div>
 			  	<!-- /.card-body -->
@@ -80,6 +80,12 @@
 			<!-- /.card -->
 		</div>
 		<!-- ./wrapper -->
+		<script>
+			if (window.location.search.includes('reset=success')) {
+				// Remove the query from URL without reloading
+				window.history.replaceState({}, document.title, "{{ route('admin.login') }}");
+			}
+		</script>
 		<!-- jQuery -->
 		<script src="{{ asset('admin-assets/plugins/jquery/jquery.min.js') }}"></script>
 		<!-- Bootstrap 4 -->

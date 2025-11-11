@@ -6,10 +6,10 @@
     <div class="container-fluid my-2">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Edit Category</h1>
+                <h1>تعديل الفئة</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <a href="{{ route('categories.index') }}" class="btn btn-primary">Back</a>
+                <a href="{{ route('categories.index') }}" class="btn btn-primary" style="float: left !important">رجوع</a>
             </div>
         </div>
     </div>
@@ -30,14 +30,14 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="name">Name</label>
-                                <input type="text" name="name" id="name" value="{{ $category->name }}" class="form-control" placeholder="Name">
+                                <label for="name">إسم</label>
+                                <input type="text" name="name" id="name" value="{{ $category->name }}" class="form-control" placeholder="إسم">
                                 <p></p>    
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="image">Image</label>
+                                <label for="image">صورة</label>
                                 <div id="imageUpload" class="dropzone"></div>
                                 <input type="hidden" name="image" id="image"> {{-- store filename --}}
                             </div>
@@ -49,19 +49,19 @@
                         </div>                                
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="status">Status</label>    
+                                <label for="status">الحالة</label>    
                                 <select name="status" id="status" class="form-control">
-                                    <option value="active" {{ ($category->status == 'active') ? 'selected' : '' }}>Active</option>
-                                    <option value="inactive" {{ ($category->status == 'inactive') ? 'selected' : '' }}>Block</option>
+                                    <option value="active" {{ ($category->status == 'active') ? 'selected' : '' }}>نشط</option>
+                                    <option value="inactive" {{ ($category->status == 'inactive') ? 'selected' : '' }}>موقف</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="show">Show on Home</label>    
+                                <label for="show">إظهار الفئة</label>    
                                 <select name="show" id="show" class="form-control">
-                                    <option {{ ($category->show == '1') ? 'selected' : '' }} value="1">Yes</option>
-                                    <option {{ ($category->show == '0') ? 'selected' : '' }} value="0">No</option>
+                                    <option {{ ($category->show == '1') ? 'selected' : '' }} value="1">نعم</option>
+                                    <option {{ ($category->show == '0') ? 'selected' : '' }} value="0">لا</option>
                                 </select>
                             </div>
                         </div>                                     
@@ -69,8 +69,8 @@
                 </div>                            
             </div>
             <div class="pb-5 pt-3">
-                <button type="submit" class="btn btn-primary">Update</button>
-                <a href="{{ route('categories.index') }}" class="btn btn-outline-dark ml-3">Cancel</a>
+                <button type="submit" class="btn btn-primary">تحديث</button>
+                <a href="{{ route('categories.index') }}" class="btn btn-outline-dark ml-3">إلغاء</a>
             </div>
         </form>
     </div>

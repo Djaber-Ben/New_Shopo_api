@@ -10,15 +10,18 @@ class CategoryApiController extends Controller
 {
     public function index()
     {
-        $categories = Category::with('stores')
-        ->where('status', 'active')
-        ->where('show', true)
-        ->get();
+        $categories = Category::where('status', 'active')
+            ->where('show', true)
+            ->get();
 
-        return response()->json([
-            'categories' => $categories,
-        ], 200);
-        // return response()->json(Category::all());
+        $categories->transform(function ($category) {
+            if ($category->image && !str_starts_with($category->image, 'storage/')) {
+                $category->image = 'storage/' . $category->image;
+            }
+            return $category;
+        });
+
+        return response()->json($categories, 200);
     }
 
     public function show($id)
@@ -32,10 +35,10 @@ class CategoryApiController extends Controller
             ], 404);
         }
 
-        return response()->json([
-            'status' => true,
-            'data' => $category
-        ]);
-    }
+        if ($category->image && !str_starts_with($category->image, 'storage/')) {
+            $category->image = 'storage/' . $category->image;
+        }
 
+        return response()->json($category, 200);
+    }
 }

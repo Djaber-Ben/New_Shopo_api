@@ -4,18 +4,32 @@ namespace App\Http\Controllers;
 
 use App\Models\Store;
 use Illuminate\Http\Request;
+use App\Models\SubscriptionPlan;
+use App\Models\StoreSubscription;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use App\Mail\StoreSubscriptionStatusUpdated;
 
 class StoreController extends Controller
 {
-     public function index(Request $request){
-        $stores = Store::latest();
-        if(!empty($request->get('keyword'))){
-            $stores = $stores->where('store_name', 'like', '%'.$request->get('keyword').'%');
-        }
-        
-        $stores = $stores->paginate(10);
-        // $data['store'] = $store;
+     public function index(Request $request)
+    {
+        $keyword = $request->get('keyword');
+
+        $stores = Store::with(['latestSubscription.subscriptionPlan'])
+            ->when($keyword, function ($query, $keyword) {
+                $query->where('store_name', 'like', "%{$keyword}%")
+                    ->orWhere('id', $keyword)
+                    ->orWhereHas('latestSubscription', function ($q) use ($keyword) {
+                        $q->where('status', 'like', "%{$keyword}%")
+                            ->orWhereHas('subscriptionPlan', function ($qp) use ($keyword) {
+                                $qp->where('name', 'like', "%{$keyword}%");
+                            });
+                    });
+            })
+            ->latest()
+            ->paginate(10);
+
         return view('admin.store.list', compact('stores'));
     }
 
@@ -27,39 +41,46 @@ class StoreController extends Controller
         return view('admin.store.edit', compact('store'));
     }
 
-    public function update($storeId, Request $request)
+    public function update( Request $request, $id)
     {
-        $store = Store::find($storeId);
-
-        if (empty($store)) {
-            $request->session()->flash('error', 'Store Not Found');
-            return response()->json([
-                'status' => false,
-                'notFound' => true,
-                'message' => 'Store Not Found',
-            ]);
-        }
-
         $validator = Validator::make($request->all(), [
             'status' => 'required',
+            'subscription_status' => 'required|in:active,expired,cancelled,pending',
         ]);
-
+        
         if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'errors' => $validator->errors()
-            ]);
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $store->status = $request->status;
+        // Find store
+        $store = Store::findOrFail($id);
 
+        // Update store status
+        $store->status = $request->status;
         $store->save();
 
-        $request->session()->flash('success', 'Store updated successfully');
+        // Get latest subscription (if any)
+        $subscription = $store->subscriptions()->latest()->first();
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Store updated successfully'
-        ]);
+        if ($subscription && $request->filled('subscription_status')) {
+            $plan = $subscription->subscriptionPlan;
+
+            $subscription->update([
+                'status' => $request->subscription_status,
+                'start_date' => now(),
+                'end_date' => $plan ? now()->addDays($plan->duration_days) : null,
+            ]);
+            $store->update(['subscription_expires_at' => $subscription->end_date]);
+
+            // Send email notification to the vendor
+            $vendor = $store->vendor; // relationship Store->vendor()
+            if ($vendor && $vendor->email) {
+                Mail::to($vendor->email)->send(new StoreSubscriptionStatusUpdated($store, $subscription, $vendor));
+            }
+        }
+
+        $request->session()->flash('success', 'تم تحديث حالة المتجر والاشتراك بنجاح.');
+
+        return redirect()->back();
     }
 }

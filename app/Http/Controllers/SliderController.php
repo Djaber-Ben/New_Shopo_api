@@ -45,7 +45,7 @@ class SliderController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255|unique:sliders,title',
-            'link' => 'required',
+            'link' => 'nullable',
             'status' => 'required',
             'image' => 'required|string', // comes from hidden input
         ]);
@@ -61,7 +61,7 @@ class SliderController extends Controller
         $Slider->slider_image = $request->image; // path from hidden input
         $Slider->save();
 
-        $request->session()->flash('success', 'Slider Created successfully');
+        $request->session()->flash('success', 'تم إنشاء شريط التمرير بنجاح.');
 
         return response()->json(['status' => true, 'message' => 'Slider added successfully']);
     }
@@ -89,7 +89,7 @@ class SliderController extends Controller
 
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255|unique:sliders,title,' . $Slider->id,
-            'link' => 'required',
+            'link' => 'nullable',
             'status' => 'required',
             'image' => 'nullable|string',
         ]);
@@ -116,7 +116,7 @@ class SliderController extends Controller
 
         $Slider->save();
 
-        $request->session()->flash('success', 'Slider updated successfully');
+        $request->session()->flash('success', 'تم تحديث شريط التمرير بنجاح.');
 
         return response()->json([
             'status' => true,
@@ -140,7 +140,7 @@ class SliderController extends Controller
         }
 
         $Slider->delete();
-        $request->session()->flash('success', 'Slider Deleted successfully');
+        $request->session()->flash('success', 'تم حذف شريط التمرير بنجاح.');
 
         return response()->json([
             'status' => true,

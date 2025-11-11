@@ -64,7 +64,7 @@ class CategoryController extends Controller
         $category->image = $request->image; // path from hidden input
         $category->save();
 
-        $request->session()->flash('success', 'Category Created successfully');
+        $request->session()->flash('success', 'تم إنشاء الفئة بنجاح.');
 
         return response()->json(['status' => true, 'message' => 'Category added successfully']);
     }
@@ -120,7 +120,7 @@ class CategoryController extends Controller
 
         $category->save();
 
-        $request->session()->flash('success', 'Category updated successfully');
+        $request->session()->flash('success', 'تم تحديث الفئة بنجاح.');
 
         return response()->json([
             'status' => true,
@@ -147,7 +147,7 @@ class CategoryController extends Controller
         }
 
         $category->delete();
-        $request->session()->flash('success', 'Category Deleted successfully');
+        $request->session()->flash('success', 'تم حذف الفئة بنجاح.');
 
         return response()->json([
             'status' => true,

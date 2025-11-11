@@ -6,7 +6,7 @@
         <div class="container-fluid my-2">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Stores</h1>
+                    <h1>المتاجر</h1>
                 </div>
             </div>
         </div>
@@ -21,7 +21,7 @@
                 <form action="" method="get">
                     <div class="card-header">
                         <div class="card-tools">
-                            <div class="input-group input-group" style="width: 250px;">
+                            <div class="input-group input-group" style="width: 450px;">
                                 <input value="{{ Request::get('keyword') }}" type="text" name="keyword" class="form-control float-right" placeholder="Search">
                                 
                                 <div class="input-group-append">
@@ -30,7 +30,7 @@
                                     </button>
                                 </div>
                                 <div class="card-titel" style="margin-left: 5px">
-                                    <button class="btn btn-dark" type="button" onclick="window.location.href='{{ route('stores.index') }}'">Reset</button>
+                                    <button class="btn btn-dark" type="button" onclick="window.location.href='{{ route('stores.index') }}'">إعادة التعيين</button>
                                 </div>
                             </div>
                         </div>
@@ -40,12 +40,14 @@
                     <table class="table table-hover text-nowrap">
                         <thead>
                             <tr>
-                                <th width="60">ID</th>
-                                <th>Name</th>
-                                {{-- <th>Slug</th> --}}
-                                <th>Logo</th>
-                                <th width="100">Status</th>
-                                <th width="100">Action</th>
+                                <th width="60">رقم</th>
+                                <th width="100">اسم</th>
+                                {{-- <th width="100">Slug</th> --}}
+                                <th width="100">شعار</th>
+                                <th width="100">حالة المتجر</th>
+                                <th width="100">إسم الخطة</th>
+                                <th width="100">حالة إشتراك المتجر</th>
+                                <th width="50">تنفيذ</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -56,9 +58,9 @@
                                         <td>{{ $store->store_name }}</td>
                                         {{-- <td>{{ $store->slug }}</td> --}}
                                         <td>
-                                            @if(!empty($store->logo))
+                                            @if(!empty($store->image))
                                                 <div>
-                                                    <img width="50" src="{{ asset('storage/'.$store->logo) }}" alt="">
+                                                    <img width="50" src="{{ asset('storage/'.$store->image) }}" alt="">
                                                 </div>
                                             @endif
                                         </td>
@@ -73,18 +75,34 @@
                                                 </svg>
                                             @endif
                                         </td>
+                                        <td>{{ $store->latestSubscription?->subscriptionPlan?->name ?? 'No plan' }}</td>
                                         <td>
-                                            <a href="{{ route('stores.edit',$store->id) }}">
-                                                <svg class="filament-link-icon w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
-                                                </svg>
-                                            </a>
+                                            @if(!empty($store->latestSubscription->status))
+                                                @if ($store->latestSubscription->status == 'expired' ?? 'No Subscription')
+                                                    <span class="bg-secondary p-1 rounded d-inline-block"><strong> منتهية الصلاحية </strong></span>
+                                                @elseif($store->latestSubscription->status == 'cancelled' ?? 'No Subscription')
+                                                    <span class="bg-info p-1 rounded d-inline-block"><strong> ملغات </strong></span>
+                                                @elseif($store->latestSubscription->status == 'pending' ?? 'No Subscription')
+                                                    <span class="bg-danger p-1 rounded d-inline-block"><strong> قيد الإنتظار </strong></span>
+                                                @elseif($store->latestSubscription->status == 'active' ?? 'No Subscription')
+                                                    <span class="bg-success p-1 rounded d-inline-block"><strong> نشطة </strong></span>
+                                                @endif
+                                            @endif
+                                        </td>
+                                        <td>
+                                            {{-- <div class="d-flex gap-6"> --}}
+                                                <a href="{{ route('stores.edit',$store->id) }}" class="btn btn-sm btn-primary">
+                                                    <svg class="filament-link-icon w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+                                                    </svg>
+                                                </a>
+                                            {{-- </div> --}}
                                         </td>
                                     </tr>
                                 @endforeach                                
                             @else
                                 <tr>
-                                    <td colspan="5">Records Not Found</td>
+                                    <td colspan="5">لايوجد متاجر بعد</td>
                                 </tr>
                             @endif                                                                                  
                         </tbody>

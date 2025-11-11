@@ -6,10 +6,10 @@
     <div class="container-fluid my-2">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Create Category</h1>
+                <h1>إنشاء فئة</h1>
             </div>
-            <div class="col-sm-6 text-right">
-                <a href="{{ route('categories.index') }}" class="btn btn-primary">Back</a>
+            <div class="col-sm-6 text-start">
+                <a href="{{ route('categories.index') }}" class="btn btn-primary" style="float: left !important">رجوع</a>
             </div>
         </div>
     </div>
@@ -28,15 +28,15 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="name">Name</label>
-                                <input type="text" name="name" id="name" class="form-control" placeholder="Name">
+                                <label for="name">إسم</label>
+                                <input type="text" name="name" id="name" class="form-control" placeholder="إسم">
                                 <p></p>    
                             </div>
                         </div>
 
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="image">Image</label>
+                                <label for="image">صورة</label>
                                 <div id="imageUpload" class="dropzone"></div>
                                 <input type="hidden" name="image" id="image"> {{-- store filename --}}
                                 <p></p>
@@ -45,20 +45,20 @@
 
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="status">Status</label>    
+                                <label for="status">الحالة</label>    
                                 <select name="status" id="status" class="form-control">
-                                    <option value="active">Active</option>
-                                    <option value="inactive">Block</option>
+                                    <option value="active">نشط</option>
+                                    <option value="inactive">موقف</option>
                                 </select>
                             </div>
                         </div>                                    
 
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="show">Show on Home</label>    
+                                <label for="show">إظهار الفئة</label>    
                                 <select name="show" id="show" class="form-control">
-                                    <option value="1">Yes</option>
-                                    <option value="0">No</option>
+                                    <option value="1">نعم</option>
+                                    <option value="0">لا</option>
                                 </select>
                             </div>
                         </div>                                    
@@ -66,8 +66,8 @@
                 </div>                            
             </div>
             <div class="pb-5 pt-3">
-                <button type="submit" class="btn btn-primary">Create</button>
-                <a href="{{ route('categories.index') }}" class="btn btn-outline-dark ml-3">Cancel</a>
+                <button type="submit" class="btn btn-primary">إنشاء</button>
+                <a href="{{ route('categories.index') }}" class="btn btn-outline-dark ml-3">إلغاء</a>
             </div>
         </form>
     </div>
@@ -145,5 +145,4 @@ $("#categoryForm").submit(function(event){
 });
 </script>
 @endsection
-
 

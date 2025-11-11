@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 	<head>
 		<link rel="icon" type="image/png" href="{{ asset('') }}">
 
@@ -18,6 +18,9 @@
 		<link rel="stylesheet" href="{{ asset('admin-assets/plugins/summernote/summernote.min.css') }}">
 
 		<link rel="stylesheet" href="{{ asset('admin-assets/plugins/select2/css/select2.min.css') }}">
+
+		<!-- Ionicons -->
+    	<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
 
 		{{-- <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"> --}}
 
@@ -86,13 +89,17 @@
 			<!-- /.content-wrapper -->
 			<footer class="main-footer">
 				
-				<strong>Copyright &copy; {{ date('Y')-1 }}-{{ date('Y') }} SHOPO. All rights reserved.
+				<strong>Copyright &copy; {{ date('Y')+1 }}-{{ date('Y') }} SHOPO. All rights reserved.
 			</footer>
 			
 		</div>
 		<!-- ./wrapper -->
 		<!-- jQuery -->
 		<script src="{{ asset('admin-assets/plugins/jquery/jquery.min.js') }}"></script>
+		
+		{{-- Install CKEditor 5  --}}
+		<script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
+		
 		<!-- Bootstrap 4 -->
 		<script src="{{ asset('admin-assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 		<!-- AdminLTE App -->
@@ -106,6 +113,9 @@
 
 		<!-- AdminLTE for demo purposes -->
 		<script src="{{ asset('admin-assets/js/demo.js') }}"></script>
+
+		<!-- ChartJS 1.0.1 -->
+	    <script src="../../plugins/chartjs/Chart.min.js"></script>
 {{-- 
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>

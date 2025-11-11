@@ -1,3 +1,114 @@
+html {
+  direction: rtl;
+}
+
+body {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Sidebar & Content layout */
+.main-sidebar {
+  right: 0;
+  left: auto;
+}
+
+.content-wrapper {
+  margin-right: 250px; /* same as sidebar width */
+  margin-left: 0;
+}
+
+/* Navbar (Appbar) adjustments */
+.main-header {
+  direction: rtl;
+}
+
+.main-header .navbar {
+  direction: rtl;
+}
+
+.main-header .navbar-nav {
+  flex-direction: row-reverse;
+}
+
+.main-header .navbar-nav.ml-auto {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.navbar-nav > .nav-item {
+  margin-left: 0.5rem;
+  margin-right: 0;
+}
+
+/* Toggle button (hamburger) alignment */
+.navbar-toggler {
+  margin-left: 0;
+  margin-right: 10px;
+}
+
+/* Reverse icon padding */
+.nav-icon {
+  margin-left: 10px;
+  margin-right: 0;
+}
+
+/* Cards, tables, and inputs */
+.card-header .card-tools {
+  float: left;
+}
+
+input, textarea, select {
+  text-align: right;
+}
+
+.table {
+  direction: rtl;
+}
+
+.breadcrumb {
+  direction: rtl;
+}
+
+/* Footer adjustments */
+.main-footer {
+  direction: rtl;
+  text-align: left;
+  padding-right: 0px;
+  padding-left: 20;
+}
+
+/* Optional: move version text or extra info to the left side */
+.main-footer .float-right {
+  float: right !important;
+}
+
+/* .content-header .col-sm-6 {
+  text-align: left !important; For RTL, this will appear on the left side visually
+} */
+
+/* .content-header .btn {
+  float: left !important;
+} */
+
+.small-box .icon {
+  right: auto !important;   /* Remove the default right position */
+  left: 10px !important;    /* Move it to the left side */
+}
+
+/* Move the close button to the left for RTL layout */
+[dir="rtl"] .alert .close,
+html[lang="ar"] .alert .close {
+    float: left;
+    right: auto;
+    left: 10px;
+}
+
+.small-box .icon > i {
+  left: 15px;
+  right: auto;
+}
+  
 .w-4 {
   width: 1rem;
 }
@@ -15,7 +126,7 @@
 .dropzone {
   background: white;
   border-radius: 5px;
-  border: 2px dashed rgb(0, 135, 247);
+  border: 2px dashed rgb(240, 171, 51);
   border-image: none;
   max-width: 100%;
   margin-left: auto;
@@ -23,5 +134,35 @@
 }
 
 .select2-container--default .select2-selection--multiple .select2-selection__rendered li{
-  color:#000;
+  color:#000000;
+}
+
+/* Change sidebar background */
+/* .main-sidebar {
+  background-color: #1e2a38 !important;
+}
+
+Change sidebar text color
+.sidebar .nav-link, 
+.sidebar .nav-header {
+  color: #ffffff !important;
+}
+
+Active link highlight */
+.sidebar .nav-link.active {
+  background-color: #e67709 !important;
+  color: #fff !important;
+}
+
+.brand-link {
+  /* background-color: #e3e9f0 !important; */
+  color: #fff !important;
+}
+.brand-link .brand-text {
+  color: #fff !important;
+}
+
+.brand-link .brand-image {
+  margin-left: 32px; /* if your layout is RTL */
+  /* margin-right: 10px; if LTR */
 }

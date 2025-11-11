@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+// use App\Events\NewMessageEvent;
 
 class ConversationApiController extends Controller
 {
@@ -17,9 +18,16 @@ class ConversationApiController extends Controller
      */
     public function index()
     {
-        $conversations = Conversation::forUser(Auth::id())
-            ->with(['client', 'vendor', 'product', 'messages' => function ($query) {
-                $query->latest()->take(1);
+        $userId = Auth::id();
+        
+        $conversations = Conversation::forUser($userId)
+            ->with(['client', 'vendor', 'product.store'])
+            ->withCount(['messages' => function ($query) use ($userId) {
+                $query->where('sender_id', '!=', $userId)
+                      ->where('is_read', false);
+            }])
+            ->with(['messages' => function ($query) {
+                $query->latest()->take(10);
             }])
             ->orderByDesc('last_message_at')
             ->paginate(10);
@@ -37,7 +45,7 @@ class ConversationApiController extends Controller
         $validator = Validator::make($request->all(), [
             'vendor_id' => 'required|exists:users,id',
             'product_id' => 'nullable|exists:products,id',
-            'message' => 'required_without:image|string|nullable',
+            'message' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
@@ -47,17 +55,14 @@ class ConversationApiController extends Controller
             ], 422);
         }
 
-        // $clientId = auth()->id();
         $client = Auth::user();
-        // if ($client->user_type !== 'client') {
-        //     return response()->json(['message' => 'Only clients can start conversations'], 403);
-        // }
 
-        // Verify vendor and product
+        // Verify vendor
         $vendor = User::where('id', $request->vendor_id)
             ->where('user_type', 'vendor')
             ->firstOrFail();
 
+        // Verify product belongs to vendor's store
         if ($request->product_id) {
             Product::where('id', $request->product_id)
                 ->whereHas('store', function ($query) use ($request) {
@@ -65,6 +70,7 @@ class ConversationApiController extends Controller
                 })->firstOrFail();
         }
 
+        // Find or create conversation
         $conversation = Conversation::firstOrCreate(
             [
                 'client_id' => $client->id,
@@ -74,23 +80,35 @@ class ConversationApiController extends Controller
             ['last_message_at' => now()]
         );
 
-        $path = null;
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('images/messages', 'public');
+        // If conversation already exists, just return it
+        if (!$conversation->wasRecentlyCreated) {
+            $conversation->load(['messages.sender', 'product.store', 'client', 'vendor']);
+            return response()->json([
+                'message' => 'Conversation retrieved',
+                'conversation' => $conversation,
+            ], 200);
         }
 
-        $message = $conversation->messages()->create([
-            'sender_id' => $client->id,
-            'message' => $request->message,
-            'image' => $path,
-        ]);
+        // Create initial message only if provided
+        if (($request->message && $request->message !== '') || $request->hasFile('image')) {
+            $path = null;
+            if ($request->hasFile('image')) {
+                $path = $request->file('image')->store('images/messages', 'public');
+            }
 
-        $conversation->update(['last_message_at' => now()]);
+            $message = $conversation->messages()->create([
+                'sender_id' => $client->id,
+                'message' => $request->message,
+                'image' => $path,
+            ]);
 
-        // Broadcast event
-        broadcast(new NewMessageEvent($message))->toOthers();
+            $conversation->update(['last_message_at' => now()]);
 
-        $conversation->load(['messages', 'product', 'client', 'vendor']);
+            // Broadcast event (comment out if NewMessageEvent doesn't exist)
+            // broadcast(new NewMessageEvent($message))->toOthers();
+        }
+
+        $conversation->load(['messages.sender', 'product.store', 'client', 'vendor']);
 
         return response()->json([
             'message' => 'Conversation started',
@@ -129,12 +147,12 @@ class ConversationApiController extends Controller
 
         $conversation->update(['last_message_at' => now()]);
 
-        // Broadcast event
-        broadcast(new NewMessageEvent($message))->toOthers();
+        // Broadcast event (comment out if NewMessageEvent doesn't exist)
+        // broadcast(new NewMessageEvent($message))->toOthers();
 
         return response()->json([
-            'message' => 'Message sent',
-            'message' => $message->load('sender'),
+            'status' => 'Message sent',
+            'data' => $message->load('sender'),
         ], 201);
     }
 
@@ -144,10 +162,10 @@ class ConversationApiController extends Controller
     public function getMessages($conversationId)
     {
         $conversation = Conversation::forUser(Auth::id())
-            ->with(['messages.sender', 'product', 'client', 'vendor'])
+            ->with(['messages.sender', 'product.store', 'client', 'vendor'])
             ->findOrFail($conversationId);
 
-        // Mark messages as read (except sender's own messages)
+        // Mark messages as read
         $conversation->messages()
             ->where('sender_id', '!=', Auth::id())
             ->where('is_read', false)
@@ -155,7 +173,7 @@ class ConversationApiController extends Controller
 
         return response()->json([
             'conversation' => $conversation,
-            'messages' => $conversation->messages()->with('sender')->paginate(20),
+            'messages' => $conversation->messages()->with('sender')->orderBy('created_at')->paginate(20),
         ], 200);
     }
 }
