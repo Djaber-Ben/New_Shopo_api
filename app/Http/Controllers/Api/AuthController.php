@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -81,6 +82,7 @@ class AuthController extends Controller
    */
   public function update(Request $request, $id)
   {
+    Log::info('🛰️ Incoming Store Update:', $request->all());
     if ($id != Auth::id()) {
       return response()->json(['message' => 'Unauthorized'], 403);
     }
@@ -98,6 +100,8 @@ class AuthController extends Controller
       'address' => 'nullable|string|max:500',
       'city' => 'nullable|string|max:100',
       'wilaya' => 'nullable|string|max:100',
+      // 'wilaya_id' => 'nullable|integer|exists:wilayas,id',
+      // 'commune_id' => 'nullable|integer|exists:communes,id',
     ]);
 
     if ($validator->fails()) {
@@ -111,7 +115,9 @@ class AuthController extends Controller
       'phone_number',
       'address',
       'city',
-      'wilaya'
+      'wilaya',
+      'wilaya_id',
+      'commune_id'
     ]);
 
     // ✅ Handle password
@@ -155,6 +161,8 @@ class AuthController extends Controller
         $store->store_name = $request->input('name', $store->store_name); 
         $store->city = $request->input('city', $store->city);
         $store->wilaya = $request->input('wilaya', $store->wilaya);
+        $store->wilaya_id = $request->input('wilaya_id', $store->wilaya_id);
+        $store->commune_id = $request->input('commune_id', $store->commune_id);
         $store->phone_number = $request->input('phone_number', $store->phone_number);
 
         // Copy image if updated

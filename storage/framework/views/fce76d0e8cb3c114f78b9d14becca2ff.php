@@ -7,42 +7,48 @@
 		<!-- Google Font: Source Sans Pro -->
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 		<!-- Font Awesome -->
-		<link rel="stylesheet" href="{{ asset('admin-assets/plugins/fontawesome-free/css/all.min.css') }}">
+		<link rel="stylesheet" href="<?php echo e(asset('admin-assets/plugins/fontawesome-free/css/all.min.css')); ?>">
 		<!-- Theme style -->
-		<link rel="stylesheet" href="{{ asset('admin-assets/css/adminlte.min.css') }}">
-		<link rel="stylesheet" href="{{ asset('admin-assets/css/custom.css') }}">
+		<link rel="stylesheet" href="<?php echo e(asset('admin-assets/css/adminlte.min.css')); ?>">
+		<link rel="stylesheet" href="<?php echo e(asset('admin-assets/css/custom.css')); ?>">
 	</head>
 	<body class="hold-transition login-page">
 		<div class="login-box">
 			<!-- /.login-logo -->
-			{{-- @include('admin.message') --}}
+			
 			<div class="card card-outline card-warning">
 			  	<div class="card-header text-center">
 					<a  class="h3 on-hover text-warning">هل نسيت كلمة السر ؟</a>
 			  	</div>
 			  	<div class="card-body">
 					<p class="login-box-msg">أدخل بريدك الإلكتروني لإعادة تعيين كلمة المرور الجديدة</p>
-					{{-- @if ($errors->any())
-						<div class="alert alert-danger">
-							<ul>
-								@foreach ($errors->all() as $error)
-									<li>{{ $error }}</li>
-								@endforeach
-							</ul>
-						</div>
-					@endif --}}
-					<form action="{{ route('admin.forgotPassword') }}" method="post">
-						@csrf
+					
+					<form action="<?php echo e(route('admin.forgotPassword')); ?>" method="post">
+						<?php echo csrf_field(); ?>
 				  		<div class="input-group mb-3">
-							<input type="email" value="{{ old('email') }}" name="email" id="email" class="form-control @error('email') is-invalid @enderror" placeholder="Email">
+							<input type="email" value="<?php echo e(old('email')); ?>" name="email" id="email" class="form-control <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" placeholder="Email">
 							<div class="input-group-append">
 					  			<div class="input-group-text">
 									<span class="fas fa-envelope"></span>
 					  			</div>
 							</div>
-							@error('email')
-								<p class="invalid-feedback" >{{ $message }}</p>
-							@enderror
+							<?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+								<p class="invalid-feedback" ><?php echo e($message); ?></p>
+							<?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
 				  		</div>
 				  		<div class="row">
 							<div class="col-12">
@@ -51,7 +57,7 @@
 				  		</div>
 					</form>
 		  			<p class="mb-1 mt-3">
-				  		<a href="{{ route('admin.login') }}">تسجيل الدخول</a>
+				  		<a href="<?php echo e(route('admin.login')); ?>">تسجيل الدخول</a>
 					</p>					
 			  	</div>
 			  	<!-- /.card-body -->
@@ -80,7 +86,7 @@
 				method: 'POST',
 				body: new FormData(form),
 				headers: {
-					'X-CSRF-TOKEN': '{{ csrf_token() }}'
+					'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>'
 				}
 			})
 			.then(res => res.json())
@@ -136,12 +142,12 @@
 
 		<!-- ./wrapper -->
 		<!-- jQuery -->
-		<script src="{{ asset('admin-assets/plugins/jquery/jquery.min.js') }}"></script>
+		<script src="<?php echo e(asset('admin-assets/plugins/jquery/jquery.min.js')); ?>"></script>
 		<!-- Bootstrap 4 -->
-		<script src="{{ asset('admin-assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+		<script src="<?php echo e(asset('admin-assets/plugins/bootstrap/js/bootstrap.bundle.min.js')); ?>"></script>
 		<!-- AdminLTE App -->
-		<script src="{{ asset('admin-assets/js/adminlte.min.js') }}"></script>
+		<script src="<?php echo e(asset('admin-assets/js/adminlte.min.js')); ?>"></script>
 		<!-- AdminLTE for demo purposes -->
-		{{-- <script src="{{ asset('admin-assets/js/demo.js') }}"></script> --}}
+		
 	</body>
-</html>
+</html><?php /**PATH C:\Users\A\Desktop\Shopo\Shopo\Shopo_api\resources\views/admin/forgot.blade.php ENDPATH**/ ?>

@@ -1,18 +1,18 @@
 {{-- <x-mail::message> --}}
 @component('mail::message')
-# Hello,
+#مرحبًا،
 
-We received a request to reset your password.  
-Click the button below to choose a new password:
+تلقينا طلبًا لإعادة تعيين كلمة مرورك.
+انقر على الزر أدناه لاختيار كلمة مرور جديدة:
 
 {{-- <x-mail::button :url="''"> --}}
 @component('mail::button', ['url' => $url])
-Reset Password
+إعادة تعيين كلمة المرور
 @endcomponent
 {{-- </x-mail::button> --}}
-If you didn’t request a password reset, please ignore this email.
+إذا لم تطلب إعادة تعيين كلمة المرور، يرجى تجاهل هذا البريد الإلكتروني.
 
-Thanks,<br>
+شكرًا،<br>
 {{ config('app.name') }}
 @endcomponent
 {{-- </x-mail::message> --}}

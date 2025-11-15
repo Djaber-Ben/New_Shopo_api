@@ -2,6 +2,8 @@
 
 namespace App\Models;
 use App\Models\User;
+use App\Models\Wilaya;
+use App\Models\Commune;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\StoreSubscription;
@@ -14,6 +16,8 @@ class Store extends Model
     protected $fillable = [
         'vendor_id', 
         'category_id', 
+        'wilaya_id', 
+        'commune_id', 
         'store_name', 
         'slug', 
         'description', 
@@ -36,6 +40,16 @@ class Store extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+    
+    public function wilaya()
+    {
+        return $this->belongsTo(Wilaya::class);
+    }
+    
+    public function commune()
+    {
+        return $this->belongsTo(Commune::class);
     }
 
     public function vendor()

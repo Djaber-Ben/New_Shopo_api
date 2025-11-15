@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Laravel Shop :: Administrative Panel</title>
+		<title>Shopo :: اللوحة الإدارية</title>
 		<!-- Google Font: Source Sans Pro -->
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 		<!-- Font Awesome -->
@@ -18,10 +18,10 @@
 			{{-- @include('admin.message') --}}
 			<div class="card card-outline card-info">
 			  	<div class="card-header text-center">
-					<a href="#" class="h3">Reset Password</a>
+					<a href="#" class="h3">إعادة تعيين كلمة المرور</a>
 			  	</div>
 			  	<div class="card-body">
-					<p class="login-box-msg">enter your new password and confirm it</p>
+					<p class="login-box-msg">أدخل كلمة المرور الجديدة وقم بتأكيدها</p>
 					{{-- @if ($errors->any())
 						<div class="alert alert-danger">
 							<ul>
@@ -57,10 +57,10 @@
 							</div>
 						</div>
 
-						<button type="submit" class="btn btn-outline-info w-100">Reset Password</button>
+						<button type="submit" class="btn btn-outline-info w-100">إعادة تعيين كلمة المرور</button>
 					</form>
 		  			<p class="mb-1 mt-3">
-				  		<a href="{{ route('admin.login') }}">Login</a>
+				  		<a href="{{ route('admin.login') }}">تسجيل الدخول</a>
 					</p>					
 			  	</div>
 			  	<!-- /.card-body -->
@@ -83,7 +83,7 @@
 					var formData = $(this).serialize();
 					const button = $(this).find('button[type="submit"]');
 
-					button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Resetting...');
+					button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>إعادة الضبط...');
 
 					$.ajax({
 						url: "{{ route('admin.resetPassword') }}",
@@ -105,7 +105,7 @@
 							handleResponse(response);
 						},
 						complete: function() {
-							button.prop('disabled', false).html('Reset Password');
+							button.prop('disabled', false).html('إعادة تعيين كلمة المرور');
 						}
 					});
 

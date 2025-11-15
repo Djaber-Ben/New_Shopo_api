@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id(); // Auto-incrementing primary key (int)
             $table->foreignId('vendor_id')->constrained('users')->onDelete('cascade'); // Foreign key to vendors table
             $table->foreignId('category_id')->constrained()->onDelete('cascade'); // Foreign key to categories table
+            $table->foreignId('wilaya_id')->constrained()->onDelete('cascade'); // Foreign key to wilayas table
+            $table->foreignId('commune_id')->constrained()->onDelete('cascade'); // Foreign key to communes table
             $table->string('store_name'); // String column for store name
             $table->string('slug')->nullable()->unique(); // String column for slug, unique to avoid duplicates
             $table->text('description')->nullable(); // Text column for description, nullable

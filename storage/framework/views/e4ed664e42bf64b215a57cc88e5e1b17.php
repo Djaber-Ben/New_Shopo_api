@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Laravel Shop :: Administrative Panel</title>
+		<title>Shopo :: اللوحة الإدارية</title>
 		<!-- Google Font: Source Sans Pro -->
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 		<!-- Font Awesome -->
@@ -18,13 +18,13 @@
 			
 			<div class="card card-outline card-primary">
 			  	<div class="card-header text-center">
-					<a href="#" class="h3">Administrative Panel</a>
+					<a href="#" class="h3">اللوحة الإدارية</a>
 			  	</div>
 			  	<div class="card-body">
-					<p class="login-box-msg">Sign in to start your session</p>
+					<p class="login-box-msg">قم بتسجيل الدخول لبدء جلستك</p>
 					<?php if(request()->has('reset') && request()->get('reset') === 'success'): ?>
 						<div class="alert alert-success alert-dismissible fade show" role="alert">
-							<i class="fas fa-check-circle"></i> Password has been successfully reset.
+							<i class="fas fa-check-circle"></i>تم إعادة تعيين كلمة المرور بنجاح.
 							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 								<span aria-hidden="true">&times;</span>
 							</button>
@@ -93,14 +93,14 @@ unset($__errorArgs, $__bag); ?>
 					  			</div>
 							</div> -->
 							<!-- /.col -->
-							<div class="col-4">
-					  			<button type="submit" class="btn btn-primary btn-block">Login</button>
+							<div class="col-6">
+					  			<button type="submit" class="btn btn-primary btn-block">تسجيل الدخول</button>
 							</div>
 							<!-- /.col -->
 				  		</div>
 					</form>
 		  			<p class="mb-1 mt-3">
-				  		<a class="text-info" href="<?php echo e(route('admin.forgotPasswordForm')); ?>">I forgot my password</a>
+				  		<a class="text-info" href="<?php echo e(route('admin.forgotPasswordForm')); ?>">لقد نسيت كلمة المرور الخاصة بي</a>
 					</p>					
 			  	</div>
 			  	<!-- /.card-body -->

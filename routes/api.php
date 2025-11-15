@@ -30,6 +30,9 @@ Route::get('/store/{id}', [StoreApiController::class, 'show'])->name('api.store.
 Route::get('/products', [ProductApiController::class, 'index'])->name('api.product.index');
 Route::get('/product/{id}', [ProductApiController::class, 'show'])->name('api.product.show');
 
+// Wilayas API
+Route::get('/wilaya', [StoreApiController::class, 'wilayas'])->name('api.categories.wilayas');
+
 // Categories API
 Route::get('/categories', [CategoryApiController::class, 'index'])->name('api.categories.index');
 Route::get('/categories/{category}', [CategoryApiController::class, 'show'])->name('api.categories.show');
@@ -69,13 +72,13 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('/user/{id}/stores', [StoreApiController::class, 'userStores'])->name('api.user.stores');
 
   // Store Management (Protected)
-  Route::get('/stores/{id}', [StoreApiController::class, 'show']);
-  Route::get('/store/create', [StoreApiController::class, 'create'])->name('api.store.create');
-  Route::post('/store/store', [StoreApiController::class, 'store'])->name('api.store.store');
+  // Route::get('/stores/{id}', [StoreApiController::class, 'show']);
+  Route::get('/stores/create', [StoreApiController::class, 'create'])->name('api.store.create');
+  Route::post('/stores/store', [StoreApiController::class, 'store'])->name('api.store.store');
   Route::post('/stores/auto-create', [StoreApiController::class, 'autoCreate'])->name('api.stores.autoCreate');
-  Route::get('/store/{id}/edit', [StoreApiController::class, 'edit'])->name('api.store.edit');
-  Route::put('/store/{id}', [StoreApiController::class, 'update'])->name('api.store.update');
-  Route::delete('/store/{id}', [StoreApiController::class, 'destroy'])->name('api.store.destroy');
+  Route::get('/stores/{id}/edit', [StoreApiController::class, 'edit'])->name('api.store.edit');
+  Route::put('/stores/{id}', [StoreApiController::class, 'update'])->name('api.store.update');
+  Route::delete('/stores/{id}', [StoreApiController::class, 'destroy'])->name('api.store.destroy');
 
   // Product Management (Protected)
   Route::get('/product/create', [ProductApiController::class, 'create'])->name('api.product.create');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Store;
 use Illuminate\Http\Request;
 use App\Models\SubscriptionPlan;
@@ -65,12 +66,32 @@ class StoreController extends Controller
         if ($subscription && $request->filled('subscription_status')) {
             $plan = $subscription->subscriptionPlan;
 
+            // Determine new start_date
+            $activeSub = $store->subscriptions()
+                ->where('status', 'active')
+                ->latest()
+                ->first();
+
+            if ($activeSub && $activeSub->end_date) {
+                // Start after the current active subscription ends
+                $newStart = Carbon::parse($activeSub->end_date);
+            } else {
+                // No active subscription → start now
+                $newStart = now();
+            }
+
+            // Calculate new end_date
+            $newEnd = $plan ? $newStart->copy()->addDays($plan->duration_days) : null;
+
+            // Update the subscription
             $subscription->update([
                 'status' => $request->subscription_status,
-                'start_date' => now(),
-                'end_date' => $plan ? now()->addDays($plan->duration_days) : null,
+                'start_date' => $newStart,
+                'end_date' => $newEnd,
             ]);
-            $store->update(['subscription_expires_at' => $subscription->end_date]);
+
+            // Store-level subscription expiry
+            $store->update(['subscription_expires_at' => $newEnd]);
 
             // Send email notification to the vendor
             $vendor = $store->vendor; // relationship Store->vendor()

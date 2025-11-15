@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Mail;
 use App\Models\User;
 use App\Models\Store;
+use App\Models\Wilaya;
 use App\Models\Category;
 use App\Helpers\MapHelper;
 use Illuminate\Http\Request;
@@ -77,6 +78,7 @@ class StoreApiController extends Controller
       return [
         'id' => $store->id,
         'vendor_id' => $store->vendor_id,
+          'wilaya_id' => $store->wilaya_id,
         'category_id' => $store->category_id,
         'store_name' => $store->store_name,
         'description' => $store->description,
@@ -131,6 +133,7 @@ class StoreApiController extends Controller
         return [
           'id' => $store->id,
           'vendor_id' => $store->vendor_id,
+          'wilaya_id' => $store->wilaya_id,
           'category_id' => $store->category_id,
           'store_name' => $store->store_name,
           'description' => $store->description,
@@ -176,17 +179,34 @@ class StoreApiController extends Controller
 
 
   /**
-   * Return the authenticated user and all available categories.
+   * Return all available wilaya.
+   */
+  public function wilayas()
+  {
+      // Load all wilayas with their communes
+      $wilayas = Wilaya::with('communes')->get();
+
+      return response()->json([
+          'wilayas' => $wilayas,
+      ], 200);
+  }
+
+  /**
+   * Return the authenticated user and all available categories and wilaya.
    */
   public function create()
   {
-    $user = Auth::user();
-    $categories = Category::all();
+      // $user = Auth::user();.
+      $categories = Category::all();
 
-    return response()->json([
-      'user' => $user,
-      'categories' => $categories,
-    ], 200);
+      // Load all wilayas with their communes
+      $wilayas = Wilaya::with('communes')->get();
+
+      return response()->json([
+          // 'user' => $user,.
+          'categories' => $categories,
+          'wilayas' => $wilayas,
+      ], 200);
   }
 
   /**
@@ -509,6 +529,8 @@ class StoreApiController extends Controller
       // Validate 
       $validator = Validator::make($request->all(), [
         'category_id' => 'sometimes|exists:categories,id',
+        // 'wilaya_id' => 'nullable|integer|exists:wilayas,id',
+        // 'commune_id' => 'nullable|integer|exists:communes,id',
         'store_name' => 'sometimes|string|max:255',
         'phone_number' => 'sometimes|string|max:20',
         'address' => 'sometimes|string|max:500',
@@ -556,6 +578,8 @@ class StoreApiController extends Controller
 
       $data = $request->only([
         'category_id',
+        'wilaya_id',
+        'commune_id',
         'store_name',
         'description',
         'phone_number',
@@ -675,6 +699,14 @@ class StoreApiController extends Controller
         if (empty($existingStore->wilaya) && !empty($user->wilaya)) {
           $existingStore->wilaya = $user->wilaya;
         }
+
+        if (empty($existingStore->wilaya_id) && !empty($user->wilaya_id)) {
+          $existingStore->wilaya_id = $user->wilaya_id;
+        }
+        if (empty($existingStore->commune_id) && !empty($user->commune_id)) {
+          $existingStore->commune_id = $user->commune_id;
+        }
+
         if (empty($existingStore->address) || $existingStore->address === 'Not specified') {
           $existingStore->address = $user->address ?? 'Not specified';
           $existingStore->address_url = $user->address ?? '';
@@ -695,6 +727,8 @@ class StoreApiController extends Controller
         'phone_number' => 'required|string|max:20',
         'city' => 'nullable|string|max:255',
         'wilaya' => 'nullable|string|max:255',
+        'wilaya_id' => 'nullable|integer|exists:wilayas,id',
+        'commune_id' => 'nullable|integer|exists:communes,id',
       ]);
 
       if ($validator->fails()) {
@@ -709,6 +743,8 @@ class StoreApiController extends Controller
       $store = Store::create([
         'vendor_id' => $user->id,
         'category_id' => $request->category_id,
+        'wilaya_id' => $request->wilaya_id,
+        'commune_id' => $request->commune_id,
         'store_name' => $request->store_name ?? ($user->name),
         'phone_number' => $request->phone_number,
         'address' => $user->address ?? '',

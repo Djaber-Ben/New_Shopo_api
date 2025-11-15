@@ -23,26 +23,43 @@ class SubscriptionPlanApiController extends Controller
     {
         $user = Auth::user();
 
-        if ($user && !$user->store) {
+        // Get the vendor's store
+        $store = $user->store ?? null;
+ 
+        if (!$store) {
             return response()->json([
                 'message' => 'You must have a store to view subscription plans.'
             ], 403);
         }
 
+        // Start with all active plans
         $plansQuery = SubscriptionPlan::where('status', 'active');
 
-        if ($user && $user->store) {
-            $store = $user->store;
+        // if ($store) {
+        //     // Get all trial plans that this store already used
+        //     $usedTrialPlanIds = StoreSubscription::where('store_id', $store->id)
+        //         ->whereHas('subscriptionPlan', function ($query) {
+        //             $query->where('is_trial', true);
+        //         })
+        //         ->pluck('subscription_plan_id')
+        //         ->toArray();
 
-            $hasUsedTrial = StoreSubscription::where('store_id', $store->id)
-                ->whereHas('subscriptionPlan', fn($q) => $q->where('is_trial', true))
-                ->exists();
+        //     // Exclude them from available plans
+        //     if (!empty($usedTrialPlanIds)) {
+        //         $plansQuery->whereNotIn('id', $usedTrialPlanIds);
+        //     }
+        // }
 
-            if ($hasUsedTrial) {
-                $plansQuery->where('is_trial', false);
-            }
+        $hasUsedTrial = StoreSubscription::where('store_id', $store->id)
+            ->whereHas('subscriptionPlan', fn($q) => $q->where('is_trial', true))
+            ->exists();
+
+        // If used a trial, hide all trial plans
+        if ($hasUsedTrial) {
+            $plansQuery->where('is_trial', false);
         }
 
+        // Load plans
         $plans = $plansQuery->get();
 
         return response()->json([
@@ -82,7 +99,19 @@ class SubscriptionPlanApiController extends Controller
 
         $validator = Validator::make($request->all(), [
             'subscription_plan_id' => 'required|exists:subscription_plans,id',
-            'payment_receipt_image' => 'required|image|mimes:jpeg,png,jpg|max:10240',
+            // store subscription
+            'payment_receipt_image' => [
+                'nullable',
+                'image',
+                'mimes:jpeg,png,jpg',
+                'max:10240',
+                function ($attribute, $value, $fail) use ($request) {
+                    $plan = SubscriptionPlan::find($request->subscription_plan_id);
+                    if ($plan && !$plan->is_trial && !$request->hasFile('payment_receipt_image')) {
+                        $fail('The payment receipt image is required for non-trial plans.');
+                    }
+                },
+            ],
         ]);
 
         if ($validator->fails()) {
@@ -91,16 +120,18 @@ class SubscriptionPlanApiController extends Controller
 
         $plan = SubscriptionPlan::where('status', 'active')->findOrFail($request->subscription_plan_id);
 
+        // Optional: Prevent duplicate pending subscriptions
         $existing = StoreSubscription::where('store_id', $store->id)
-            ->whereIn('status', ['pending', 'active'])
+            ->whereIn('status', ['pending'])
             ->first();
 
         if ($existing) {
             return response()->json([
-                'message' => 'You already have an active or pending subscription.',
+                'message' => 'You already have a pending subscription for this store.',
             ], 409);
         }
 
+        // recive and Upload the offline payment receipt image from the store owners
         // ✅ Compress receipt image using built-in PHP GD
         $payment_receipt_image = $this->compressAndStoreImage(
             $request->file('payment_receipt_image')->getRealPath(),
@@ -114,6 +145,7 @@ class SubscriptionPlanApiController extends Controller
             'status' => 'pending',
         ]);
 
+        // Send email to admin
         $admin = User::where('user_type', 'admin')->first();
         if ($admin) {
             Mail::to($admin->email)->send(new AdminNewSubscriptionNotification($store, $subscription));
